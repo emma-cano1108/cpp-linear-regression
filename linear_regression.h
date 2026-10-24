@@ -12,7 +12,7 @@ class LinearRegression{
     
     public:
         //Default empty Constructor.
-        LinearRegression();
+        LinearRegression() = default;
 
         //m = number of samples (rows) and n = number of independent variables (columns)
         //Each method will separate its sample percentage for fit (70%) and scoring (30%)
