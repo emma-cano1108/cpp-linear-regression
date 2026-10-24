@@ -18,7 +18,7 @@ class LinearRegression{
         //Each method will separate its sample percentage for fit (70%) and scoring (30%)
 
         //Train method: Receives x_inputs (m x n matrix) and y_outputs (m x 1 vector)
-        void fit(vector<vector<double>> x_inputs, vector<double> y_outputs);
+        void fit(vector<vector<double>>& x_inputs, vector<double>& y_outputs);
 
         //Predict method: Receives x_inputs (m x n matrix) and returns prediction vector (ŷ)
         vector<double> predict(vector<vector<double>> x_inputs);
