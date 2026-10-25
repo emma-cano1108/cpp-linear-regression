@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-  cout << "Linear Regression";
+  cout << "Linear Regression" << endl;
   vector<vector<double>> X = {
         {1.0, 2.0},
         {2.0, 1.0},

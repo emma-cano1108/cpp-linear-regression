@@ -10,17 +10,46 @@ bool sizeValidation(vector<vector<double>> &x_inputs,
                     vector<double> &y_outputs) {
   return x_inputs.size() == y_outputs.size();
 }
-//Function for matrix transposing
-vector<vector<double>> transposeMatrix(vector<vector<double>>& matrix){
-    vector<vector<double>> transposed = {{},{},{}};
-    for(int row = 0; row < matrix.size(); row++){
-        for(int value = 0; value < matrix[row].size(); value++){
-            //Replaces xₙₘ value with xₘₙ value.
-            transposed[row].push_back(matrix[value][row]);
-            
-        }
+// Function for matrix transposing
+vector<vector<double>> transposeMatrix(vector<vector<double>> &matrix) {
+  vector<vector<double>> transposed(matrix.size(),
+                                    vector<double>(matrix[0].size(), 0.0));
+
+  for (int row = 0; row < matrix.size(); row++) {
+    for (int value = 0; value < matrix[row].size(); value++) {
+      // Replaces xₙₘ value with xₘₙ value.
+      transposed[row][value] = matrix[value][row];
     }
-    return transposed;
+  }
+  return transposed;
+}
+
+// Function for matrix product
+vector<vector<double>> matrixProduct(vector<vector<double>>& left_matrix, vector<vector<double>>& right_matrix) {
+  //Validation of Left matrix columns number = Right matrix rows number
+  if (left_matrix[0].size() != right_matrix.size()) {
+    cout << "Left matrix columns number does not match with right matrix rows "
+            "number. Can not do the matrix product. Empty matrix will be "
+            "returned"
+         << endl;
+    return {};
+  }
+
+  vector<vector<double>> matrix_product(
+      left_matrix.size(), vector<double>(right_matrix[0].size(), 0.0));
+  double current_value = 0;
+
+  //Matrix product algorithm.
+  for (int iteration = 0; iteration < left_matrix.size(); iteration++) {
+    for (int row = 0; row < right_matrix[0].size(); row++) {
+      double current_value = 0.0;
+      for (int value = 0; value < left_matrix[0].size(); value++) {
+        current_value += left_matrix[iteration][value] * right_matrix[value][row];
+      }
+      matrix_product[iteration][row] = current_value;
+    }
+  }
+  return matrix_product;
 }
 
 void LinearRegression::fit(vector<vector<double>> &x_inputs,
@@ -46,18 +75,22 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
     y_train_outputs.push_back(y_outputs[row]);
   }
 
-  //"A" matrix. Formed by joining a "1" vector with the x_inputs matrix ([1 | X])
+  //"A" matrix. Formed by joining a "1" vector with the x_inputs matrix ([1 |
+  // X])
   vector<vector<double>> a_matrix = x_train_inputs;
   for (int row = 0; row < x_train_inputs.size(); row++) {
-    //Inserts a 1 at the begin of each row
+    // Inserts a 1 at the begin of each row
     a_matrix[row].insert(a_matrix[row].begin(), 1);
   }
 
   //"Aᵀ" Matrix. Transposed A by using transposeMatrix function.
   vector<vector<double>> at_matrix = transposeMatrix(a_matrix);
+
+  //Product matrix of AᵀA
+  vector<vector<double>> at_a_product_matrix = matrixProduct(a_matrix, at_matrix);
 }
 
-//Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
+// Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
 void LinearRegression::displayData(vector<vector<double>> &x_inputs,
                                    vector<double> &y_outputs) {
   if (!sizeValidation(x_inputs, y_outputs)) {
