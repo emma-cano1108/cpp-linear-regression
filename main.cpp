@@ -22,7 +22,7 @@ int main() {
     };
 
     LinearRegression mlr;
-    mlr.displayData(X, y);
+    mlr.fit(X, y);
 
   return 0;
 }

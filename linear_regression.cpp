@@ -10,6 +10,18 @@ bool sizeValidation(vector<vector<double>> &x_inputs,
                     vector<double> &y_outputs) {
   return x_inputs.size() == y_outputs.size();
 }
+//Function for matrix transposing
+vector<vector<double>> transposeMatrix(vector<vector<double>>& matrix){
+    vector<vector<double>> transposed = {{},{},{}};
+    for(int row = 0; row < matrix.size(); row++){
+        for(int value = 0; value < matrix[row].size(); value++){
+            //Replaces xₙₘ value with xₘₙ value.
+            transposed[row].push_back(matrix[value][row]);
+            
+        }
+    }
+    return transposed;
+}
 
 void LinearRegression::fit(vector<vector<double>> &x_inputs,
                            vector<double> &y_outputs) {
@@ -41,6 +53,8 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
     a_matrix[row].insert(a_matrix[row].begin(), 1);
   }
 
+  //"Aᵀ" Matrix. Transposed A by using transposeMatrix function.
+  vector<vector<double>> at_matrix = transposeMatrix(a_matrix);
 }
 
 //Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
