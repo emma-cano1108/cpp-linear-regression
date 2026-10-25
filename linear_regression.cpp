@@ -33,6 +33,14 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
     x_train_inputs.push_back(x_inputs[row]);
     y_train_outputs.push_back(y_outputs[row]);
   }
+
+  //"A" matrix. Formed by joining a "1" vector with the x_inputs matrix ([1 | X])
+  vector<vector<double>> a_matrix = x_train_inputs;
+  for (int row = 0; row < x_train_inputs.size(); row++) {
+    //Inserts a 1 at the begin of each row
+    a_matrix[row].insert(a_matrix[row].begin(), 1);
+  }
+
 }
 
 //Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
