@@ -5,20 +5,48 @@
 #include <string>
 using namespace std;
 
+//Utility functions
+
 // Function for x and y same size validation
 bool sizeValidation(vector<vector<double>> &x_inputs,
                     vector<double> &y_outputs) {
   return x_inputs.size() == y_outputs.size();
 }
+
+//Function to parse vector<double> to vector<vector<double>> if needed
+vector<vector<double>> parseToMatrix(const vector<double>& input_vector) {
+  vector<vector<double>> matrix(input_vector.size(), vector<double>(1));
+
+  for (size_t row = 0; row < input_vector.size(); row++) {
+    matrix[row][0] = input_vector[row];
+  }
+
+  return matrix;
+}
+
+//Function to parse vector<vector<double>> (nx1) to vector<double> if needed
+vector<double> parseToVector(const vector<vector<double>>& matrix) {
+  vector<double> result(matrix.size());
+
+  for (size_t row = 0; row < matrix.size(); row++) {
+    if (!matrix[row].empty()) {
+      result[row] = matrix[row][0];
+    }
+  }
+
+  return result;
+}
+
+//Matrix Operation Functions
+
 // Function for matrix transposing
 vector<vector<double>> transposeMatrix(vector<vector<double>> &matrix) {
-  vector<vector<double>> transposed(matrix.size(),
-                                    vector<double>(matrix[0].size(), 0.0));
+  vector<vector<double>> transposed(matrix[0].size(),
+                                    vector<double>(matrix.size(), 0.0));
 
   for (int row = 0; row < matrix.size(); row++) {
     for (int value = 0; value < matrix[row].size(); value++) {
-      // Replaces xₙₘ value with xₘₙ value.
-      transposed[row][value] = matrix[value][row];
+      transposed[value][row] = matrix[row][value];
     }
   }
   return transposed;
@@ -106,7 +134,7 @@ vector<vector<double>> inverseMatrix(vector<vector<double>>& matrix) {
       }
     }
   }
-  
+
   //Declaration of inverse_matrix with the same size as the original to save the result
   vector<vector<double>> inverse_matrix(matrix_size, vector<double>(matrix_size, 0.0));
   for (int row = 0; row < matrix_size; row++) {
@@ -149,14 +177,24 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
     a_matrix[row].insert(a_matrix[row].begin(), 1);
   }
 
-  //"Aᵀ" Matrix. Transposed A by using transposeMatrix function.
+  //"Aᵀ" Matrix. Transposed A by using transposeMatrix function
   vector<vector<double>> at_matrix = transposeMatrix(a_matrix);
 
   //Product matrix of AᵀA
-  vector<vector<double>> at_a_product_matrix = matrixProduct(a_matrix, at_matrix);
+  vector<vector<double>> at_a_product_matrix = matrixProduct(at_matrix, a_matrix);
 
   //Inverse matrix of AᵀA (AᵀA)⁻¹
   vector<vector<double>> at_a_product_inverse_matrix = inverseMatrix(at_a_product_matrix);
+  
+  //Matrix-Vector product for Aᵀy (y= y_train_outputs). Returns a nx1 vector
+  vector<vector<double>> parsed_y_train_outputs = parseToMatrix(y_train_outputs);
+  vector<vector<double>> at_y_product_vector = matrixProduct(at_matrix, parsed_y_train_outputs);
+
+  //Weights vector: Full (AᵀA)⁻¹Aᵀy product
+  vector<vector<double>> not_parsed_weights = matrixProduct(at_a_product_inverse_matrix, at_y_product_vector);
+  weights = parseToVector(not_parsed_weights);
+  //Bias: First entry of weights vector
+  bias = weights[0];
 }
 
 // Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
@@ -181,4 +219,13 @@ void LinearRegression::displayData(vector<vector<double>> &x_inputs,
       cout << "|" << setw(w) << v;
     cout << "|" << setw(w) << y_outputs[r] << "|" << endl;
   }
+}
+
+//Getters
+vector<double> LinearRegression::getWeights(){
+  return weights;
+}
+
+double LinearRegression::getBias(){
+  return bias;
 }
