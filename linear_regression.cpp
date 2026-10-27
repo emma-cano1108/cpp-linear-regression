@@ -52,6 +52,72 @@ vector<vector<double>> matrixProduct(vector<vector<double>>& left_matrix, vector
   return matrix_product;
 }
 
+//Function for inverse matrix
+vector<vector<double>> inverseMatrix(vector<vector<double>>& matrix) {
+  //Validation for square matrix
+  if (matrix.size() != matrix[0].size()) {
+    cout << "Matrix is not square. Can not invert the matrix. Empty matrix will "
+            "be returned"
+         << endl;
+    return {};
+  }
+
+  int matrix_size = matrix.size();
+
+  //Creation of [A | I] matrix for Gauss-Jordan reduction.
+  vector<vector<double>> augmented_matrix(matrix_size, vector<double>(2 * matrix_size, 0.0));
+
+  for (int row = 0; row < matrix_size; row++) {
+    for (int col = 0; col < matrix_size; col++) {
+      augmented_matrix[row][col] = matrix[row][col];
+    }
+    augmented_matrix[row][row + matrix_size] = 1.0;
+  }
+
+  //Gauss-Jordan reduction algorithm.
+  for (int iteration = 0; iteration < matrix_size; iteration++) {
+    int max_row = iteration;
+    for (int row = iteration + 1; row < matrix_size; row++) {
+      if (abs(augmented_matrix[row][iteration]) > abs(augmented_matrix[max_row][iteration])) {
+        max_row = row;
+      }
+    }
+
+    swap(augmented_matrix[iteration], augmented_matrix[max_row]);
+    //Validation for det(A) = 0. Using 1e-12 instead of 0 to avoid possible rounding errors.
+    if (abs(augmented_matrix[iteration][iteration]) < 1e-12) {
+      cout << "Matrix is singular. Can not invert the matrix. Empty matrix will "
+              "be returned"
+           << endl;
+      return {};
+    }
+
+    double pivot = augmented_matrix[iteration][iteration];
+    for (int col = 0; col < 2 * matrix_size; col++) {
+      augmented_matrix[iteration][col] /= pivot;
+    }
+
+    for (int row = 0; row < matrix_size; row++) {
+      if (row != iteration) {
+        double factor = augmented_matrix[row][iteration];
+        for (int col = 0; col < 2 * matrix_size; col++) {
+          augmented_matrix[row][col] -= factor * augmented_matrix[iteration][col];
+        }
+      }
+    }
+  }
+  
+  //Declaration of inverse_matrix with the same size as the original to save the result
+  vector<vector<double>> inverse_matrix(matrix_size, vector<double>(matrix_size, 0.0));
+  for (int row = 0; row < matrix_size; row++) {
+    for (int col = 0; col < matrix_size; col++) {
+      inverse_matrix[row][col] = augmented_matrix[row][col + matrix_size];
+    }
+  }
+
+  return inverse_matrix;
+}
+
 void LinearRegression::fit(vector<vector<double>> &x_inputs,
                            vector<double> &y_outputs) {
   // Size validation for x_inputs and y_outputs rows number. If not equal,
@@ -88,6 +154,9 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
 
   //Product matrix of AᵀA
   vector<vector<double>> at_a_product_matrix = matrixProduct(a_matrix, at_matrix);
+
+  //Inverse matrix of AᵀA (AᵀA)⁻¹
+  vector<vector<double>> at_a_product_inverse_matrix = inverseMatrix(at_a_product_matrix);
 }
 
 // Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
