@@ -34,7 +34,7 @@ vector<double> y = {
 
     LinearRegression mlr;
     mlr.fit(X, y);
-    cout << "Bias " << mlr.getWeights().size() << endl;
+    cout << "Bias " << mlr.getBias() << endl;
     for(int i = 1; i < mlr.getWeights().size(); i++){
       cout << "W" << i << ": " << mlr.getWeights()[i] << endl;
     }
