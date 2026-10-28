@@ -27,7 +27,7 @@ class LinearRegression{
         double score(vector<double> y_hat);
 
         //Data scaling method: Receives x_inputs (m x n matrix), and returns the scaled matrix
-        vector<vector<double>> data_scaling(vector<vector<double>> x_inputs);
+        vector<vector<double>> data_scaling(vector<vector<double>>& x_inputs);
 
         //Displays data in cells format
         void displayData(vector<vector<double>>& x_inputs, vector<double>& y_outputs);

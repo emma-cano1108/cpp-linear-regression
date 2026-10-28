@@ -197,6 +197,22 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
   bias = weights[0];
 }
 
+vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_inputs){
+  vector<vector<double>> scaled_matrix;
+  return scaled_matrix;
+}
+
+
+//Getters
+vector<double> LinearRegression::getWeights(){
+  return weights;
+}
+
+double LinearRegression::getBias(){
+  return bias;
+}
+
+
 // Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
 void LinearRegression::displayData(vector<vector<double>> &x_inputs,
                                    vector<double> &y_outputs) {
@@ -219,13 +235,4 @@ void LinearRegression::displayData(vector<vector<double>> &x_inputs,
       cout << "|" << setw(w) << v;
     cout << "|" << setw(w) << y_outputs[r] << "|" << endl;
   }
-}
-
-//Getters
-vector<double> LinearRegression::getWeights(){
-  return weights;
-}
-
-double LinearRegression::getBias(){
-  return bias;
 }
