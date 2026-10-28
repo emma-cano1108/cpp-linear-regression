@@ -218,16 +218,35 @@ vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_
   double min_range = *min_element(ranges.begin(), ranges.end());
 
   //If (max range / min range) >= 500, normalization will be applied. Otherwise, same matrix will be returned.
+  //To have in account: if x_inputs is an nx1 matrix (one variable), normalization will not be applied
   if(max_range/min_range <= 500){
-    cout << "Not necessary";
     return x_inputs;
   }
-  cout << "Necessary";
 
-  
+  //Z-Score normaliztion algorithm
+
+  //EACH FUNCTION NEEDS TO BE APPLIED TO THE TRANSPOSED MATRIX, NOT THE ORIGINAL
 
   //Initializes an empty matrix with same size as x_inputs
   vector<vector<double>> scaled_matrix(x_inputs.size(), vector<double>(x_inputs.size(), 0.0));
+
+  //Arithmetic Average "μ"
+  double accumulated_sum;
+  vector<double> sorted_averages = {};
+
+  //Stores the average of each xₙ in a vector.
+  for(int row = 0; row < x_t_inputs.size(); row++){
+    accumulated_sum = 0;
+    for(int value = 0; value < x_t_inputs[row].size(); value++){
+      accumulated_sum += x_t_inputs[row][value];
+    }
+    //Average for current variable
+    sorted_averages.push_back(accumulated_sum/x_t_inputs[row].size());
+  }
+
+  for(int i = 0; i < sorted_averages.size(); i++){
+    cout<< "Average " << i << ": " << sorted_averages[i] << endl;
+  }
 
 
   return scaled_matrix;
