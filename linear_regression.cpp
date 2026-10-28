@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 //Utility functions
@@ -198,7 +199,37 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
 }
 
 vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_inputs){
-  vector<vector<double>> scaled_matrix;
+
+  //Checks if it is really necessary to scale by dynamic range evaluation (max range / min range)
+
+  //Gets the transpose for x_inputs to compute easily
+  vector<vector<double>> x_t_inputs = transposeMatrix(x_inputs);
+
+  vector<double> ranges = {};
+
+  for(int row = 0; row < x_t_inputs.size(); row++){
+    //Gets the max and min value for each variable (xₙ) and store its substraction (range) in ranges vector
+    double max = *max_element(x_t_inputs[row].begin(), x_t_inputs[row].end());
+    double min = *min_element(x_t_inputs[row].begin(), x_t_inputs[row].end());
+    ranges.push_back(max - min);
+  }
+  //Gets the max and min range stored.
+  double max_range = *max_element(ranges.begin(), ranges.end());
+  double min_range = *min_element(ranges.begin(), ranges.end());
+
+  //If (max range / min range) >= 500, normalization will be applied. Otherwise, same matrix will be returned.
+  if(max_range/min_range <= 500){
+    cout << "Not necessary";
+    return x_inputs;
+  }
+  cout << "Necessary";
+
+  
+
+  //Initializes an empty matrix with same size as x_inputs
+  vector<vector<double>> scaled_matrix(x_inputs.size(), vector<double>(x_inputs.size(), 0.0));
+
+
   return scaled_matrix;
 }
 
