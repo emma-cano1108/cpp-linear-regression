@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <random>
 #include <vector>
 using namespace std;
 
@@ -92,6 +93,20 @@ vector<vector<double>> inverseMatrix(vector<vector<double>>& matrix) {
 
   int matrix_size = matrix.size();
 
+  double max_scale = 0.0;
+  for (int row = 0; row < matrix_size; row++) {
+    for (int col = 0; col < matrix_size; col++) {
+      double val = abs(matrix[row][col]);
+      if (val > max_scale) {
+        max_scale = val;
+      }
+    }
+  }
+  double singular_threshold = 1e-12 * max_scale;
+  if (singular_threshold == 0.0) {
+    singular_threshold = 1e-12;
+  }
+
   //Creation of [A | I] matrix for Gauss-Jordan reduction.
   vector<vector<double>> augmented_matrix(matrix_size, vector<double>(2 * matrix_size, 0.0));
 
@@ -113,7 +128,7 @@ vector<vector<double>> inverseMatrix(vector<vector<double>>& matrix) {
 
     swap(augmented_matrix[iteration], augmented_matrix[max_row]);
     //Validation for det(A) = 0. Using 1e-12 instead of 0 to avoid possible rounding errors.
-    if (abs(augmented_matrix[iteration][iteration]) < 1e-12) {
+    if (abs(augmented_matrix[iteration][iteration]) < singular_threshold) {
       return {};
     }
 
@@ -154,16 +169,24 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
     return;
   }
 
+  vector<int> indices(x_inputs.size());
+  for (int i = 0; i < (int)x_inputs.size(); i++) {
+    indices[i] = i;
+  }
+
+  random_device rd;
+  mt19937 g(rd());
+  shuffle(indices.begin(), indices.end(), g);
+
   vector<vector<double>> x_train_inputs;
   vector<double> y_train_outputs;
 
-  // Training values range: floors the value of the 70% of the data
   int train_range = floor(x_inputs.size() * 0.7);
 
-  // Assigns the values for the training matrix and vector.
   for (int row = 0; row < train_range; row++) {
-    x_train_inputs.push_back(x_inputs[row]);
-    y_train_outputs.push_back(y_outputs[row]);
+    int idx = indices[row];
+    x_train_inputs.push_back(x_inputs[idx]);
+    y_train_outputs.push_back(y_outputs[idx]);
   }
 
   //"A" matrix. Formed by joining a "1" vector with the x_inputs matrix ([1 |
