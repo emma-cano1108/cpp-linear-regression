@@ -170,9 +170,6 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
     y_train_outputs.push_back(y_outputs[row]);
   }
 
-  //x_train_inputs get scaled if needed.
-  x_train_inputs = data_scaling(x_train_inputs);
-
   //"A" matrix. Formed by joining a "1" vector with the x_inputs matrix ([1 |
   // X])
   vector<vector<double>> a_matrix = x_train_inputs;
@@ -209,6 +206,10 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
 
 vector<double> LinearRegression::predict(vector<vector<double>>& x_inputs){
 
+  if(weights.size() == 0){
+    cout << "Weights are not defined. Can not predict." << endl;
+    return {}; 
+  }
   vector<vector<double>> x_score_inputs;
 
   // Uses the training range to store the remaining percentage in x_score_inputs
