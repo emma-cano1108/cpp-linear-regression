@@ -7,16 +7,16 @@ using namespace std;
 int main() {
   cout << "Linear Regression" << endl;
   vector<vector<double>> X = {
-    {1.0},
-    {2.5},
-    {3.0},
-    {4.5},
-    {5.0},
-    {6.5},
-    {7.0},
-    {8.5},
-    {9.0},
-    {11.0}
+    {1.0, 4.0},
+    {2.5, 3.0},
+    {3.0, 9.0},
+    {4.5, 4.3},
+    {5.0, 0.0},
+    {6.5, 5.4},
+    {7.0, 4.5},
+    {8.5, 3.5},
+    {9.0, 4.0},
+    {5900, 1.0}
 };
 
 vector<double> y = {
@@ -38,6 +38,9 @@ vector<double> y = {
     for(int i = 1; i < mlr.getWeights().size(); i++){
       cout << "W" << i << ": " << mlr.getWeights()[i] << endl;
     }
+
+    vector<vector<double>> a = mlr.data_scaling(X);
+    mlr.displayData(a, y);
 
   return 0;
 }

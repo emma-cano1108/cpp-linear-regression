@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 //Utility functions
@@ -169,6 +170,9 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
     y_train_outputs.push_back(y_outputs[row]);
   }
 
+  //x_train_inputs get scaled if needed.
+  x_train_inputs = data_scaling(x_train_inputs);
+
   //"A" matrix. Formed by joining a "1" vector with the x_inputs matrix ([1 |
   // X])
   vector<vector<double>> a_matrix = x_train_inputs;
@@ -197,6 +201,94 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
   bias = weights[0];
 }
 
+vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_inputs){
+
+  //Checks if it is really necessary to scale by dynamic range evaluation (max range / min range)
+
+  //Gets the transpose for x_inputs to compute easily
+  vector<vector<double>> x_t_inputs = transposeMatrix(x_inputs);
+
+  vector<double> ranges = {};
+
+  for(int row = 0; row < x_t_inputs.size(); row++){
+    //Gets the max and min value for each variable (xₙ) and store its substraction (range) in ranges vector
+    double max = *max_element(x_t_inputs[row].begin(), x_t_inputs[row].end());
+    double min = *min_element(x_t_inputs[row].begin(), x_t_inputs[row].end());
+    ranges.push_back(max - min);
+  }
+  //Gets the max and min range stored.
+  double max_range = *max_element(ranges.begin(), ranges.end());
+  double min_range = *min_element(ranges.begin(), ranges.end());
+
+  //If (max range / min range) >= 500, normalization will be applied. Otherwise, same matrix will be returned.
+  //To have in account: if x_inputs is an nx1 matrix (one variable), normalization will not be applied
+  if(max_range/min_range <= 500){
+    return x_inputs;
+  }
+
+  //Z-Score normaliztion algorithm
+
+  //EACH FUNCTION NEEDS TO BE APPLIED TO THE TRANSPOSED MATRIX, NOT THE ORIGINAL
+
+
+  //Arithmetic Average "μ"
+  double accumulated_sum = 0;
+  vector<double> sorted_averages = {};
+
+  //Stores the average of each xₙ in a vector
+  for(int row = 0; row < x_t_inputs.size(); row++){
+    for(int value = 0; value < x_t_inputs[row].size(); value++){
+      accumulated_sum += x_t_inputs[row][value];
+    }
+    //Average for current variable
+    sorted_averages.push_back(accumulated_sum/x_t_inputs[row].size());
+    accumulated_sum = 0;
+  }
+  
+
+  //Standard deviation "σ". Calculated with population formula
+  vector<double> sorted_standard_deviations = {};
+
+  for(int row = 0; row < x_t_inputs.size(); row++){
+    for(int value = 0; value < x_t_inputs[row].size(); value++){
+      accumulated_sum += pow((x_t_inputs[row][value] - sorted_averages[row]), 2);
+    }
+    //Standard deviation for current variable
+    sorted_standard_deviations.push_back(sqrt(accumulated_sum/x_t_inputs[row].size()));
+    accumulated_sum = 0;
+  }
+
+
+  //"Z" scaled value computing and scaled matrix return
+
+  //Initializes an empty matrix with same size as x_inputs
+  vector<vector<double>> scaled_matrix(x_t_inputs.size(), vector<double>(x_t_inputs[0].size(), 0.0));
+
+  double z_value = 0;
+  
+  //Gets Z = (x - μ)/σ
+  for(int row = 0; row < x_t_inputs.size(); row++){
+    for(int value = 0; value < x_t_inputs[row].size(); value++){
+      z_value = (x_t_inputs[row][value] - sorted_averages[row])/sorted_standard_deviations[row];
+      //Stores scaled value in scaled_matrix
+      scaled_matrix[row][value] = z_value;
+    }
+  }
+  //Returns transposed scaled matrix to inverse the transpose made at the begin.
+  return transposeMatrix(scaled_matrix);
+}
+
+
+//Getters
+vector<double> LinearRegression::getWeights(){
+  return weights;
+}
+
+double LinearRegression::getBias(){
+  return bias;
+}
+
+
 // Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
 void LinearRegression::displayData(vector<vector<double>> &x_inputs,
                                    vector<double> &y_outputs) {
@@ -219,13 +311,4 @@ void LinearRegression::displayData(vector<vector<double>> &x_inputs,
       cout << "|" << setw(w) << v;
     cout << "|" << setw(w) << y_outputs[r] << "|" << endl;
   }
-}
-
-//Getters
-vector<double> LinearRegression::getWeights(){
-  return weights;
-}
-
-double LinearRegression::getBias(){
-  return bias;
 }
