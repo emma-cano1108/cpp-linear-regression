@@ -40,6 +40,7 @@ vector<double> y = {
     }
 
     vector<vector<double>> a = mlr.data_scaling(X);
+    mlr.displayData(a, y);
 
   return 0;
 }

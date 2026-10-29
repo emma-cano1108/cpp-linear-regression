@@ -227,11 +227,9 @@ vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_
 
   //EACH FUNCTION NEEDS TO BE APPLIED TO THE TRANSPOSED MATRIX, NOT THE ORIGINAL
 
-  //Initializes an empty matrix with same size as x_inputs
-  vector<vector<double>> scaled_matrix(x_inputs.size(), vector<double>(x_inputs.size(), 0.0));
 
   //Arithmetic Average "μ"
-  double accumulated_sum;
+  double accumulated_sum = 0;
   vector<double> sorted_averages = {};
 
   //Stores the average of each xₙ in a vector
@@ -264,7 +262,23 @@ vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_
     cout<< "Standard Deviation " << i << ": " << sorted_standard_deviations[i] << endl;
   }
 
-  return scaled_matrix;
+  //"Z" scaled value computing and scaled matrix return
+
+  //Initializes an empty matrix with same size as x_inputs
+  vector<vector<double>> scaled_matrix(x_t_inputs.size(), vector<double>(x_t_inputs[0].size(), 0.0));
+
+  double z_value = 0;
+  
+  //Gets Z = (x - μ)/σ
+  for(int row = 0; row < x_t_inputs.size(); row++){
+    for(int value = 0; value < x_t_inputs[row].size(); value++){
+      z_value = (x_t_inputs[row][value] - sorted_averages[row])/sorted_standard_deviations[row];
+      //Stores scaled value in scaled_matrix
+      scaled_matrix[row][value] = z_value;
+    }
+  }
+  //Returns transposed scaled matrix to inverse the transpose made at the begin.
+  return transposeMatrix(scaled_matrix);
 }
 
 
