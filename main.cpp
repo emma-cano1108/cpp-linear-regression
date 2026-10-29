@@ -44,7 +44,8 @@ int main() {
   //By using loadData, stores the whole excel data in X_ice_cream and y_ice_cream, headers are only for print format
   loadData("data/Ice_cream_selling_data.csv", X_ice_cream, y_ice_cream, headers_ice_cream);
 
-  //Scales and trains the data. Bias and each weight value will slightly change in each execution because of data shuffle at fit begin
+  //Shuffles, scales and trains the data. Bias and each weight value will slightly change in each execution because of data shuffle
+  mlr.shuffleData(X_ice_cream, y_ice_cream);
   X_ice_cream = mlr.data_scaling(X_ice_cream);
   mlr.fit(X_ice_cream, y_ice_cream);
 
@@ -80,6 +81,7 @@ int main() {
   vector<string> headers_student_exam;
   loadData("data/student_exam_scores.csv", X_student_exam, y_student_exam, headers_student_exam);
 
+  mlr.shuffleData(X_student_exam, y_student_exam);
   X_student_exam = mlr.data_scaling(X_student_exam);
   mlr.fit(X_student_exam, y_student_exam);
 

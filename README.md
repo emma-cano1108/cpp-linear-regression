@@ -7,8 +7,8 @@ A from-scratch C++ implementation of multiple linear regression using the **norm
 - Multiple linear regression via the normal equation: w = (AᵀA)⁻¹Aᵀy
 - Bias (intercept) and per-feature weights learned from data
 - Z-score normalization, gated by a dynamic-range threshold
-- 70/30 train–test split with randomized row shuffling before training
-- Prediction and mean squared error scoring on the final 30% of the loaded data
+- 70/30 train–test split: rows are shuffled once, the first 70% trains the model and the complementary final 30% is held out
+- Prediction and mean squared error scoring on the held-out 30%
 - Matrix toolkit: transpose, product, and inverse (Gauss–Jordan)
 - Two included datasets: univariate (ice-cream sales) and multivariate (student exam scores)
 
@@ -56,7 +56,7 @@ where:
 
 Normalization only runs when the dynamic-range condition holds:
 
-max(range) / min(range) >= 500
+max(range) / min(range) > 500
 
 where range = max − min per feature. Otherwise the matrix is returned unchanged. For a single-variable matrix, normalization is skipped.
 
@@ -64,7 +64,7 @@ where range = max − min per feature. Otherwise the matrix is returned unchange
 
 MSE = (1/m) Σ(yᵢ − ŷᵢ)²
 
-computed on the final 30% of the loaded data (the last rows of the array as loaded, independent of the training shuffle). Extremely small scores (< 1e-20) are reported as 0.
+computed on the held-out 30% (the final 30% of the shuffled data, complementary to the 70% used for training). Extremely small scores (< 1e-20) are reported as 0.
 
 ### Execution flow
 
@@ -72,13 +72,14 @@ computed on the final 30% of the loaded data (the last rows of the array as load
 
 1. Instantiate the class: `LinearRegression mlr;`
 2. Load data (`loadData`): parse the CSV into feature matrix `X`, target vector `y`, and column headers.
-3. Scale data (`data_scaling`): apply Z-score normalization if needed.
-4. Train (`fit`): shuffle rows, reserve 70% for training, solve the normal equation, and store `bias` and `weights`.
-5. Print the model: displays `y = b + w₁x₁ + …` using the header names.
-6. Predict (`predict`): compute ŷ for the remaining 30% and print each prediction next to the real value.
-7. Score (`score`): print the MSE.
+3. Shuffle data (`shuffleData`): shuffle `X` and `y` once with the same permutation so the split is randomized.
+4. Scale data (`data_scaling`): apply Z-score normalization if needed.
+5. Train (`fit`): take the first 70% of the (already shuffled) rows for training, solve the normal equation, and store `bias` and `weights`.
+6. Print the model: displays `y = b + w₁x₁ + …` using the header names.
+7. Predict (`predict`): compute ŷ for the complementary final 30% and print each prediction next to the real value.
+8. Score (`score`): print the MSE.
 
-This is the recommended execution flow to obtain better results — `data_scaling` should precede `fit`
+This is the recommended execution flow to obtain better results — `shuffleData` should precede `data_scaling`, and `data_scaling` should precede `fit`
 
 **To have in account:** Bias, weights and score will vary slightly between executions
 
@@ -121,21 +122,21 @@ Both CSVs expect a header row followed by numeric rows, with the target in the l
 
 | Metric | Possible observed range |
 |--------|----------------|
-| Bias | ~13.8 to ~17.7 |
-| Weight `Temperature (°C)` | ~-1.75 to ~-0.30 |
-| Score (MSE) | ~126 to ~242 |
+| Bias | ~12.5 to ~17.7 |
+| Weight `Temperature (°C)` | ~-2.4 to ~0.2 |
+| Score (MSE) | ~110 to ~300 |
 
 
 ### Student exam scores (multivariate)
 
 | Metric | Possible Observed range |
 |--------|----------------|
-| Bias | ~-3.0 to ~1.0 |
-| Weight `hours_studied` | ~1.51 to ~1.61 |
-| Weight `sleep_hours` | ~0.79 to ~1.03 |
-| Weight `attendance_percent` | ~0.09 to ~0.12 |
+| Bias | ~-4.7 to ~1.2 |
+| Weight `hours_studied` | ~1.49 to ~1.60 |
+| Weight `sleep_hours` | ~0.78 to ~1.16 |
+| Weight `attendance_percent` | ~0.09 to ~0.13 |
 | Weight `previous_scores` | ~0.16 to ~0.18 |
-| Score (MSE) | ~8.15 to ~8.57 |
+| Score (MSE) | ~7.9 to ~9.1 |
 
 **The MSE is comparatively stable across runs because the dataset is larger and less sensitive to the shuffle.**
 

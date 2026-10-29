@@ -158,13 +158,11 @@ vector<vector<double>> inverseMatrix(vector<vector<double>>& matrix) {
   return inverse_matrix;
 }
 
-void LinearRegression::fit(vector<vector<double>> &x_inputs,
-                           vector<double> &y_outputs) {
-  // Size validation for x_inputs and y_outputs rows number. If not equal,
-  // finishes the method execution.
+void LinearRegression::shuffleData(vector<vector<double>> &x_inputs,
+                                   vector<double> &y_outputs) {
   if (!sizeValidation(x_inputs, y_outputs)) {
     cout
-        << "x inputs and y outputs size does not match. Can not train the model"
+        << "x inputs and y outputs size does not match. Can not shuffle the data"
         << endl;
     return;
   }
@@ -178,15 +176,38 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
   mt19937 g(rd());
   shuffle(indices.begin(), indices.end(), g);
 
+  vector<vector<double>> shuffled_x_inputs;
+  vector<double> shuffled_y_outputs;
+
+  for (int row = 0; row < (int)indices.size(); row++) {
+    int idx = indices[row];
+    shuffled_x_inputs.push_back(x_inputs[idx]);
+    shuffled_y_outputs.push_back(y_outputs[idx]);
+  }
+
+  x_inputs = shuffled_x_inputs;
+  y_outputs = shuffled_y_outputs;
+}
+
+void LinearRegression::fit(vector<vector<double>> &x_inputs,
+                           vector<double> &y_outputs) {
+  // Size validation for x_inputs and y_outputs rows number. If not equal,
+  // finishes the method execution.
+  if (!sizeValidation(x_inputs, y_outputs)) {
+    cout
+        << "x inputs and y outputs size does not match. Can not train the model"
+        << endl;
+    return;
+  }
+
   vector<vector<double>> x_train_inputs;
   vector<double> y_train_outputs;
 
   int train_range = floor(x_inputs.size() * 0.7);
 
   for (int row = 0; row < train_range; row++) {
-    int idx = indices[row];
-    x_train_inputs.push_back(x_inputs[idx]);
-    y_train_outputs.push_back(y_outputs[idx]);
+    x_train_inputs.push_back(x_inputs[row]);
+    y_train_outputs.push_back(y_outputs[row]);
   }
 
   //"A" matrix. Formed by joining a "1" vector with the x_inputs matrix ([1 |
