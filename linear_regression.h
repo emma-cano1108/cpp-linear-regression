@@ -24,7 +24,7 @@ class LinearRegression{
         vector<double> predict(vector<vector<double>>& x_inputs);
 
         //Scoring method: Receives prediction vector (ŷ) and returns the score value
-        double score(vector<double> y_hat);
+        double score(vector<double>& y_hat, vector<double>& y_vector);
 
         //Data scaling method: Receives x_inputs (m x n matrix), and returns the scaled matrix
         vector<vector<double>> data_scaling(vector<vector<double>>& x_inputs);
