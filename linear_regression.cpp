@@ -213,12 +213,21 @@ vector<double> LinearRegression::predict(vector<vector<double>>& x_inputs){
     x_score_inputs.push_back(x_inputs[row]);
   }
 
-  for(int i = 0; i < x_score_inputs.size(); i++){
-    for(int j = 0; j < x_score_inputs[i].size(); j++){
-      cout << x_score_inputs[i][j] << endl;
-    }
-  };
   vector<double> y_hat = {};
+  double current_y_prediction = 0;
+  double weight_x_sum = 0;
+
+  for(int row = 0; row < x_score_inputs.size(); row++){
+    for(int value = 0; value < x_score_inputs[row].size(); value++){
+      weight_x_sum += weights[value] * x_score_inputs[row][value];
+    }
+    current_y_prediction = bias + weight_x_sum;
+    cout << current_y_prediction << endl;
+    current_y_prediction = 0;
+    weight_x_sum = 0;
+  }
+
+
   return y_hat;
 }
 
