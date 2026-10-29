@@ -169,6 +169,7 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
     x_train_inputs.push_back(x_inputs[row]);
     y_train_outputs.push_back(y_outputs[row]);
   }
+  x_train_inputs = data_scaling(x_train_inputs);
 
   //"A" matrix. Formed by joining a "1" vector with the x_inputs matrix ([1 |
   // X])
