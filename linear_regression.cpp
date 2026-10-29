@@ -285,7 +285,7 @@ vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_
 
   //If (max range / min range) >= 500, normalization will be applied. Otherwise, same matrix will be returned.
   //To have in account: if x_inputs is an nx1 matrix (one variable), normalization will not be applied
-  if(max_range/min_range <= 500){
+  if(max_range/min_range < 500){
     return x_inputs;
   }
 
