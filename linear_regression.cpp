@@ -1,8 +1,6 @@
 #include "linear_regression.h"
 #include <cmath>
-#include <iomanip>
 #include <iostream>
-#include <string>
 #include <algorithm>
 #include <vector>
 using namespace std;
@@ -116,9 +114,6 @@ vector<vector<double>> inverseMatrix(vector<vector<double>>& matrix) {
     swap(augmented_matrix[iteration], augmented_matrix[max_row]);
     //Validation for det(A) = 0. Using 1e-12 instead of 0 to avoid possible rounding errors.
     if (abs(augmented_matrix[iteration][iteration]) < 1e-12) {
-      cout << "Matrix is singular. Can not invert the matrix. Empty matrix will "
-              "be returned"
-           << endl;
       return {};
     }
 
@@ -187,7 +182,11 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
 
   //Inverse matrix of AᵀA (AᵀA)⁻¹
   vector<vector<double>> at_a_product_inverse_matrix = inverseMatrix(at_a_product_matrix);
-  
+
+  if(at_a_product_inverse_matrix.size() == 0){
+    cout << "Matrix is singular, so is not invertible, can not generate a linear regression model to this data " << endl;
+    return;
+  }
   //Matrix-Vector product for Aᵀy (y= y_train_outputs). Returns a nx1 vector
   vector<vector<double>> parsed_y_train_outputs = parseToMatrix(y_train_outputs);
   vector<vector<double>> at_y_product_vector = matrixProduct(at_matrix, parsed_y_train_outputs);
@@ -358,29 +357,4 @@ vector<double> LinearRegression::getWeights(){
 
 double LinearRegression::getBias(){
   return bias;
-}
-
-
-// Displays the arguments data in cell format: | x0 | x1 | ... | xn | y |
-void LinearRegression::displayData(vector<vector<double>> &x_inputs,
-                                   vector<double> &y_outputs) {
-  if (!sizeValidation(x_inputs, y_outputs)) {
-    cout << "x inputs and y outputs size does not match. Can not display the "
-            "data"
-         << endl;
-    return;
-  }
-  const int w = 10;
-  cout << fixed << setprecision(4) << "Data:" << endl;
-
-  for (size_t i = 0; i < x_inputs[0].size(); i++)
-    cout << "|" << setw(w) << "x" + to_string(i);
-  cout << "|" << setw(w) << "y" << "|" << endl
-       << string((x_inputs[0].size() + 1) * (w + 1) + 1, '-') << endl;
-
-  for (size_t r = 0; r < x_inputs.size(); r++) {
-    for (double v : x_inputs[r])
-      cout << "|" << setw(w) << v;
-    cout << "|" << setw(w) << y_outputs[r] << "|" << endl;
-  }
 }
