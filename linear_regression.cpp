@@ -201,6 +201,27 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
   bias = weights[0];
 }
 
+vector<double> LinearRegression::predict(vector<vector<double>>& x_inputs){
+
+  vector<vector<double>> x_score_inputs;
+
+  // Uses the training range to store the remaining percentage in x_score_inputs
+  int train_range = floor(x_inputs.size() * 0.7);
+
+  // Assigns the values for the score matrix (remaining 30% of the data)
+  for (int row = train_range; row < x_inputs.size(); row++) {
+    x_score_inputs.push_back(x_inputs[row]);
+  }
+
+  for(int i = 0; i < x_score_inputs.size(); i++){
+    for(int j = 0; j < x_score_inputs[i].size(); j++){
+      cout << x_score_inputs[i][j] << endl;
+    }
+  };
+  vector<double> y_hat = {};
+  return y_hat;
+}
+
 vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_inputs){
 
   //Checks if it is really necessary to scale by dynamic range evaluation (max range / min range)
