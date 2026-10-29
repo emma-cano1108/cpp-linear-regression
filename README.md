@@ -4,7 +4,7 @@ A from-scratch C++ implementation of multiple linear regression using the **norm
 
 ## Features
 
-- Multiple linear regression via the normal equation: w = (AᵀA)⁻¹Aᵀy
+- Multiple linear regression via the normal equation: $`w = (A^\top A)^{-1} A^\top y`$
 - Bias (intercept) and per-feature weights learned from data
 - Z-score normalization, gated by a dynamic-range threshold
 - 70/30 train–test split: rows are shuffled once, the first 70% trains the model and the complementary final 30% is held out
@@ -32,37 +32,49 @@ cpp-linear-regression/
 
 The model is solved in closed form:
 
-w = (AᵀA)⁻¹Aᵀy
+```math
+w = (A^\top A)^{-1} A^\top y
+```
 
-where A is the training matrix augmented with a leading column of `1`s (for the bias `b`), and w = [b, w₁, …, wₙ]ᵀ. The inverse (AᵀA)⁻¹ is computed with Gauss–Jordan elimination.
+where $`A`$ is the training matrix augmented with a leading column of `1`s (for the bias `b`), and $`w = [b, w_1, \dots, w_n]^\top`$. The inverse $`(A^\top A)^{-1}`$ is computed with Gauss–Jordan elimination.
 
 **Prediction**
 
-ŷ = b + w₁x₁ + w₂x₂ + … + wₙxₙ
+```math
+\hat{y}_i = \hat{\beta}_0 + \hat{w}_1 x_{i1} + \hat{w}_2 x_{i2} + \dots + \hat{w}_p x_{ip}
+```
 
 **Z-score normalization**
 
 Each feature is standardized as:
 
-z = (x − μ) / σ
+```math
+z = \frac{x - \mu}{\sigma}
+```
 
 where:
 
-μ = arithmetic average
+$`\mu`$ = arithmetic average
 
-σ = population standard deviation:
+$`\sigma`$ = population standard deviation:
 
-σ = √( Σ(x − μ)² / m )
+```math
+\sigma = \sqrt{\frac{\sum (x - \mu)^2}{m}}
+```
 
 Normalization only runs when the dynamic-range condition holds:
 
-max(range) / min(range) > 500
+```math
+\frac{\max(\text{range})}{\min(\text{range})} > 500
+```
 
-where range = max − min per feature. Otherwise the matrix is returned unchanged. For a single-variable matrix, normalization is skipped.
+where $`\text{range} = \max - \min`$ per feature. Otherwise the matrix is returned unchanged. For a single-variable matrix, normalization is skipped.
 
 **Score (Mean Squared Error)**
 
-MSE = (1/m) Σ(yᵢ − ŷᵢ)²
+```math
+\text{MSE} = \frac{1}{m} \sum (y_i - \hat{y}_i)^2
+```
 
 computed on the held-out 30% (the final 30% of the shuffled data, complementary to the 70% used for training). Extremely small scores (< 1e-20) are reported as 0.
 
@@ -143,9 +155,7 @@ Both CSVs expect a header row followed by numeric rows, with the target in the l
 ## Limitations and assumptions
 
 
-- **Singular matrices.** If `AᵀA` is not invertible (e.g., collinear or duplicate features), a warning message is printed and training is aborted for that dataset.
+- **Singular matrices.** If $`A^\top A`$ is not invertible (e.g., collinear or duplicate features), a warning message is printed and training is aborted for that dataset.
 
 ### To have in account:
 **Numeric CSVs only.** `loadData` parses every cell with `stod`; non-numeric values will fail at runtime.
-
-
