@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <vector>
 using namespace std;
 
 //Utility functions
@@ -316,6 +317,37 @@ vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_
   }
   //Returns transposed scaled matrix to inverse the transpose made at the begin.
   return transposeMatrix(scaled_matrix);
+}
+
+double LinearRegression::score(vector<double>& y_hat, vector<double>& y_vector){
+  if(y_hat.size() == 0 || y_vector.size() == 0){
+    cout << "Either y_hat or y_vector size is 0. Can not compute the score";
+    return 0;
+  }
+  vector<double> comparison_y_vector = {};
+
+  //Stores the related results from the scoring data (same 30%)
+  int train_range = floor(y_vector.size() * 0.7);
+
+  for (int value = train_range; value < y_vector.size(); value++) {
+    comparison_y_vector.push_back(y_vector[value]);
+  }
+
+  //Applies the Mean Squared Error formula and stores its value in score;
+
+  double accumulated_sum = 0;
+  double score = 0;
+
+  for(int value = 0; value < y_hat.size(); value++){
+    accumulated_sum += pow((comparison_y_vector[value] - y_hat[value]), 2);
+  }
+  score = accumulated_sum / y_hat.size();
+
+  //If score is an extremely low number, returns 0 instead
+  if(score < 1e-20){
+    score = 0;
+  }
+  return score;
 }
 
 

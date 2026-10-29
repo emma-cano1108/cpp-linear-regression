@@ -7,17 +7,19 @@ using namespace std;
 int main() {
   cout << "Linear Regression" << endl;
   vector<vector<double>> X = {
-    {0.5,   20000.0},
-    {2.0,   100.0},
-    {10.0,  5000.0},
-    {40.0,  50.0},
-    {150.0, 30000.0},
-    {500.0, 800.0},
-    {800.0, 12000.0},
-    {100.0, 1000.0}
+    {2.0,  7.0,  1.0},
+    {5.0,  3.0,  8.0},
+    {1.0,  9.0,  4.0},
+    {8.0,  2.0,  6.0},
+    {3.0,  5.0,  9.0},
+    {9.0,  8.0,  2.0},
+    {4.0,  1.0,  7.0},
+    {6.0,  6.0,  5.0},
+    {7.0,  4.0,  3.0},
+    {10.0, 10.0, 10.0},
 };
 
-vector<double> y = {46.5, 11.2, 45.0, 125.1, 515.0, 1506.6, 2429.0, 307};
+  vector<double> y = {-7.5, 8.5, -11.5, 14.0, 2.0, 1.5, 10.5, 2.5, 7.0, 3.0};
 
     LinearRegression mlr;
     X = mlr.data_scaling(X);
@@ -28,9 +30,8 @@ vector<double> y = {46.5, 11.2, 45.0, 125.1, 515.0, 1506.6, 2429.0, 307};
     }
 
     vector<double> y_hat = mlr.predict(X);
-    for(const double value : y_hat){
-      cout << value << endl;
-    }
+
+    cout << "score: " << mlr.score(y_hat, y);
 
   return 0;
 }
