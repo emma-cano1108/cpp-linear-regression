@@ -5,7 +5,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <iomanip>
 using namespace std;
 
 // Loads a CSV file into X and y
