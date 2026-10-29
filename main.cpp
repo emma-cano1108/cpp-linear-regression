@@ -13,7 +13,7 @@ vector<double> y = {2.2, 4.1, 6.2, 7.9, 10.1};
     LinearRegression mlr;
     mlr.fit(X, y);
     cout << "Bias " << mlr.getBias() << endl;
-    for(int i = 1; i < mlr.getWeights().size(); i++){
+    for(int i = 0; i < mlr.getWeights().size(); i++){
       cout << "W" << i << ": " << mlr.getWeights()[i] << endl;
     }
 

@@ -196,9 +196,15 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
 
   //Weights vector: Full (AᵀA)⁻¹Aᵀy product
   vector<vector<double>> not_parsed_weights = matrixProduct(at_a_product_inverse_matrix, at_y_product_vector);
-  weights = parseToVector(not_parsed_weights);
-  //Bias: First entry of weights vector
-  bias = weights[0];
+  
+  //Parses the weights matrix to a single vector
+  vector<double> parsed_weights = parseToVector(not_parsed_weights);
+
+  //Fills the weights vector with the parsed_weights from index 1 to the end (without bias)
+  weights.assign(parsed_weights.begin() + 1, parsed_weights.end());
+
+  //Bias: First entry of parsed_weights vector
+  bias = parsed_weights[0];
 }
 
 vector<double> LinearRegression::predict(vector<vector<double>>& x_inputs){
