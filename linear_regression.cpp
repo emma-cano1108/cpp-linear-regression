@@ -228,7 +228,10 @@ vector<double> LinearRegression::predict(vector<vector<double>>& x_inputs){
       weight_x_sum += weights[value] * x_score_inputs[row][value];
     }
     current_y_prediction = bias + weight_x_sum;
-    cout << current_y_prediction << endl;
+    //Stores each prediction in y_hat vector.
+    y_hat.push_back(current_y_prediction);
+    
+    //Restarts the values for each row
     current_y_prediction = 0;
     weight_x_sum = 0;
   }

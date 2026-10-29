@@ -17,7 +17,7 @@ vector<double> y = {2.2, 4.1, 6.2, 7.9, 10.1};
       cout << "W" << i << ": " << mlr.getWeights()[i] << endl;
     }
 
-    mlr.predict(X);
+    vector<double> y_hat = mlr.predict(X);
 
   return 0;
 }
