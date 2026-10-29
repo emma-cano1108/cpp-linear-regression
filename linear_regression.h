@@ -21,7 +21,7 @@ class LinearRegression{
         void fit(vector<vector<double>>& x_inputs, vector<double>& y_outputs);
 
         //Predict method: Receives x_inputs (m x n matrix) and returns prediction vector (ŷ)
-        vector<double> predict(vector<vector<double>> x_inputs);
+        vector<double> predict(vector<vector<double>>& x_inputs);
 
         //Scoring method: Receives prediction vector (ŷ) and returns the score value
         double score(vector<double> y_hat);

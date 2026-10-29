@@ -196,9 +196,48 @@ void LinearRegression::fit(vector<vector<double>> &x_inputs,
 
   //Weights vector: Full (AᵀA)⁻¹Aᵀy product
   vector<vector<double>> not_parsed_weights = matrixProduct(at_a_product_inverse_matrix, at_y_product_vector);
-  weights = parseToVector(not_parsed_weights);
-  //Bias: First entry of weights vector
-  bias = weights[0];
+  
+  //Parses the weights matrix to a single vector
+  vector<double> parsed_weights = parseToVector(not_parsed_weights);
+
+  //Fills the weights vector with the parsed_weights from index 1 to the end (without bias)
+  weights.assign(parsed_weights.begin() + 1, parsed_weights.end());
+
+  //Bias: First entry of parsed_weights vector
+  bias = parsed_weights[0];
+}
+
+vector<double> LinearRegression::predict(vector<vector<double>>& x_inputs){
+
+  vector<vector<double>> x_score_inputs;
+
+  // Uses the training range to store the remaining percentage in x_score_inputs
+  int train_range = floor(x_inputs.size() * 0.7);
+
+  // Assigns the values for the score matrix (remaining 30% of the data)
+  for (int row = train_range; row < x_inputs.size(); row++) {
+    x_score_inputs.push_back(x_inputs[row]);
+  }
+
+  vector<double> y_hat = {};
+  double current_y_prediction = 0;
+  double weight_x_sum = 0;
+
+  for(int row = 0; row < x_score_inputs.size(); row++){
+    for(int value = 0; value < x_score_inputs[row].size(); value++){
+      weight_x_sum += weights[value] * x_score_inputs[row][value];
+    }
+    current_y_prediction = bias + weight_x_sum;
+    //Stores each prediction in y_hat vector.
+    y_hat.push_back(current_y_prediction);
+    
+    //Restarts the values for each row
+    current_y_prediction = 0;
+    weight_x_sum = 0;
+  }
+
+
+  return y_hat;
 }
 
 vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_inputs){
