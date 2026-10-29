@@ -234,20 +234,35 @@ vector<vector<double>> LinearRegression::data_scaling(vector<vector<double>>& x_
   double accumulated_sum;
   vector<double> sorted_averages = {};
 
-  //Stores the average of each xₙ in a vector.
+  //Stores the average of each xₙ in a vector
   for(int row = 0; row < x_t_inputs.size(); row++){
-    accumulated_sum = 0;
     for(int value = 0; value < x_t_inputs[row].size(); value++){
       accumulated_sum += x_t_inputs[row][value];
     }
     //Average for current variable
     sorted_averages.push_back(accumulated_sum/x_t_inputs[row].size());
+    accumulated_sum = 0;
   }
 
   for(int i = 0; i < sorted_averages.size(); i++){
     cout<< "Average " << i << ": " << sorted_averages[i] << endl;
   }
 
+  //Standard deviation "σ". Calculated with population formula
+  vector<double> sorted_standard_deviations = {};
+
+  for(int row = 0; row < x_t_inputs.size(); row++){
+    for(int value = 0; value < x_t_inputs[row].size(); value++){
+      accumulated_sum += pow((x_t_inputs[row][value] - sorted_averages[row]), 2);
+    }
+    //Standard deviation for current variable
+    sorted_standard_deviations.push_back(sqrt(accumulated_sum/x_t_inputs[row].size()));
+    accumulated_sum = 0;
+  }
+
+  for(int i = 0; i < sorted_averages.size(); i++){
+    cout<< "Standard Deviation " << i << ": " << sorted_standard_deviations[i] << endl;
+  }
 
   return scaled_matrix;
 }
